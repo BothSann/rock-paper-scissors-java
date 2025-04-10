@@ -13,6 +13,28 @@ public class RockPaperScissors {
     private static final int PAPER = 1;
     private static final int SCISSORS = 2;
 
+    public void run() {
+        displayWelcomeMessage();
+        playGameLoop();
+        displayFinalResults();
+        closeResources();
+    }
+
+    public void playGameLoop() {
+        boolean playAgain = true;
+
+        while (playAgain) {
+            int playerChoice = getPlayerChoice();
+            int computerChoice = getComputerChoice();
+
+            displayChoices(playerChoice, computerChoice);
+            determineWinner(playerChoice, computerChoice);
+            displayScore();
+
+            playAgain = askToPlayAgain();
+        }
+    }
+
     public void displayWelcomeMessage() {
         printHeader();
         printRules();
@@ -20,9 +42,9 @@ public class RockPaperScissors {
     }
 
     public void printHeader() {
-        System.out.println("=".repeat(20));
+        System.out.println("=".repeat(32));
         System.out.println(" WELCOME TO ROCK PAPER SCISSORS ");
-        System.out.println("=".repeat(20));
+        System.out.println("=".repeat(32));
     }
 
     public void printRules() {
@@ -33,8 +55,13 @@ public class RockPaperScissors {
     }
 
     public void printStartMessage() {
-        System.out.println("\nPress Enter to start the game...\n");
-        scanner.nextLine();
+        System.out.println("\nLet's play!\n");
+    }
+
+    public int getPlayerChoice() {
+        displayChoiceOptions();
+        String input = getUserInput();
+        return convertInputToChoice(input);
     }
 
     public void displayChoiceOptions() {
@@ -52,12 +79,13 @@ public class RockPaperScissors {
     private int convertInputToChoice(String input) {
         while (true) {
             if (isRockInput(input)) return ROCK;
-            if (isPaperInput(input)) return PAPER;
-            if (isScissorsInput(input)) return SCISSORS;
-
-            System.out.println("Invalid input! Please enter 1, 2, or 3 (or rock, paper, scissors).");
-            displayChoiceOptions();
-            input = getUserInput();
+            else if (isPaperInput(input)) return PAPER;
+            else if (isScissorsInput(input)) return SCISSORS;
+            else {
+                System.out.println("Invalid input! Please enter 1, 2, or 3 (or rock, paper, scissors).");
+                displayChoiceOptions();
+                input = getUserInput();
+            }
         }
     }
 
@@ -78,10 +106,10 @@ public class RockPaperScissors {
     }
 
     private void displayChoices(int playerChoice, int computerChoice) {
-        System.out.println("\n" + "=".repeat(20) );
+        System.out.println("\n" + "=".repeat(32) );
         System.out.println("You chose: " + choiceToString(playerChoice));
         System.out.println("Computer chose: " + choiceToString(computerChoice));
-        System.out.println("=".repeat(20));
+        System.out.println("=".repeat(32));
     }
 
     public String choiceToString(int choice) {
@@ -94,9 +122,13 @@ public class RockPaperScissors {
     }
 
     private void determineWinner(int playerChoice, int computerChoice) {
-        if (isTie(playerChoice, computerChoice)) handleTie();
-        if (isPlayerWin(playerChoice, computerChoice)) handlePlayerWin();
-        else handleComputerWin();
+        if (isTie(playerChoice, computerChoice)) {
+            handleTie();
+        } else if (isPlayerWin(playerChoice, computerChoice)) {
+            handlePlayerWin();
+        } else {
+            handleComputerWin();
+        }
     }
 
     public boolean isTie (int playerChoice, int computerChoice) {
@@ -136,9 +168,13 @@ public class RockPaperScissors {
             System.out.println("\nDo you wish to play again? (yes/no)");
             String response = getUserInput();
 
-            if(isYesResponse(response)) return true;
-            if(isNoResponse(response)) return false;
-            System.out.println("Invalid input! Please enter 'yes' or 'no'.");
+            if (isYesResponse(response)) {
+                return true;
+            } else if (isNoResponse(response)) {
+                return false;
+            } else {
+                System.out.println("Invalid response! Please enter 'yes' or 'no'.");
+            }
         }
     }
 
@@ -148,5 +184,55 @@ public class RockPaperScissors {
 
     public boolean isNoResponse(String response) {
         return response.toLowerCase().startsWith("n");
+    }
+
+    public void displayFinalResults() {
+        int totalGames = calculateTotalGames();
+
+        printFinalHeader();
+        printGameStatistics(totalGames);
+        printOverallWinner();
+        printFarewell();
+    }
+
+    public int calculateTotalGames() {
+        return playerWins + computerWins + ties;
+    }
+
+    public void printFinalHeader() {
+        System.out.println("\n" + "=".repeat(32));
+        System.out.printf("%10s%s%10s%n", "", "FINAL RESULT", "");
+        System.out.println("=".repeat(32));
+    }
+
+    public void printGameStatistics(int totalGames) {
+        System.out.println("Total games played: " + totalGames);
+        System.out.println("Your wins: " + playerWins + " (" + calculatePercentage(playerWins, totalGames) + "%)");
+        System.out.println("Computer wins: " + computerWins + " (" + calculatePercentage(computerWins, totalGames) + "%)");
+        System.out.println("Ties: " + ties + " (" + calculatePercentage(ties, totalGames) + "%)");
+    }
+
+    public void printOverallWinner() {
+        if (playerWins > computerWins) {
+            System.out.println("\nCongratulations! You are the overall winner! \uD83C\uDF89");
+        } else if (computerWins > playerWins) {
+            System.out.println("\nThe computer is the overall winner. Better luck next time! \uD83D\uDCBB");
+        } else {
+            System.out.println("\nIt's a tie overall! Well played by both sides.");
+        }
+    }
+
+    public void printFarewell() {
+        System.out.println("\nThank you for playing Rock, Paper, Scissors!");
+        System.out.println("=".repeat(32));
+    }
+
+    public double calculatePercentage(int wins, int totalGames) {
+        if (totalGames == 0) return 0;
+        return Math.round(((double) wins / totalGames) * 100);
+    }
+
+    public void closeResources() {
+        scanner.close();
     }
 }
