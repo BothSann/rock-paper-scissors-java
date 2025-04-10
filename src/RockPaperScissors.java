@@ -136,7 +136,7 @@ public class RockPaperScissors {
     }
 
     public void handleTie() {
-        System.out.println("It's a tie! No one wins.");
+        System.out.println("It's a tie! No one wins. \uD83E\uDD1D");
         ties++;
     }
 
@@ -165,7 +165,7 @@ public class RockPaperScissors {
 
     public boolean askToPlayAgain() {
         while (true) {
-            System.out.println("\nDo you wish to play again? (yes/no)");
+            System.out.print("\nDo you wish to play again? (yes/no): ");
             String response = getUserInput();
 
             if (isYesResponse(response)) {
