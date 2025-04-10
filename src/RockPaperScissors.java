@@ -94,7 +94,9 @@ public class RockPaperScissors {
     }
 
     private void determineWinner(int playerChoice, int computerChoice) {
-
+        if (isTie(playerChoice, computerChoice)) handleTie();
+        if (isPlayerWin(playerChoice, computerChoice)) handlePlayerWin();
+        else handleComputerWin();
     }
 
     public boolean isTie (int playerChoice, int computerChoice) {
@@ -115,5 +117,36 @@ public class RockPaperScissors {
     public void handlePlayerWin() {
         System.out.println("Congratulations! You win this round! \uD83C\uDF89");
         playerWins++;
+    }
+
+    public void handleComputerWin() {
+        System.out.println("Sorry! The computer wins this round. \uD83D\uDCBB");
+        computerWins++;
+    }
+
+    public void displayScore() {
+        System.out.println("\nCurrent Score:");
+        System.out.println("You: " + playerWins);
+        System.out.println("Computer: " + computerWins);
+        System.out.println("Ties: " + ties);
+    }
+
+    public boolean askToPlayAgain() {
+        while (true) {
+            System.out.println("\nDo you wish to play again? (yes/no)");
+            String response = getUserInput();
+
+            if(isYesResponse(response)) return true;
+            if(isNoResponse(response)) return false;
+            System.out.println("Invalid input! Please enter 'yes' or 'no'.");
+        }
+    }
+
+    public boolean isYesResponse(String response) {
+        return response.toLowerCase().startsWith("y");
+    }
+
+    public boolean isNoResponse(String response) {
+        return response.toLowerCase().startsWith("n");
     }
 }
